@@ -1,41 +1,135 @@
-# 通信サービスにおける顧客離脱予測 (Customer Churn Prediction)
+# Tab Solver AI
 
-## 1. プロジェクト概要
-本プロジェクトは，通信会社（Telco）の解約（Churn）予測と，離脱防止のための施策立案を目的としたデータ分析ポートフォリオである．
-新規顧客の獲得コストは既存顧客の維持コストよりも高いため，機械学習を用いて解約リスクの高い顧客を事前に特定し，リテンション施策のROI（投資対効果）を最大化することを目指す．
+AIがWebページの問題を自動検出・解答するChrome拡張機能です。
 
-## 2. 使用技術
-- **言語**: Python
-- **ライブラリ**: Pandas, NumPy, Matplotlib, Seaborn, Scikit-Learn
-- **機械学習モデル**: ランダムフォレスト (Random Forest Classifier)
+**対応ページ**: Googleフォーム / PDF / LeetCode / オンライン講義 / Web問題集 / 英語問題 / 数式問題
 
-## 3. 分析プロセスと結果
-Kaggle等で公開されている「Telco Customer Churn dataset」を使用し，以下の手順で分析を行った．
+---
 
-### 3.1 現状把握（EDA）
-欠損値処理およびカテゴリ変数のエンコーディングを実施後，解約状況を可視化した．
-- 全体の解約率は約26.5%である．
-- 契約形態別に見ると，「月単位（Month-to-month）」の契約者の解約率が他の長期契約者と比較して圧倒的に高いことが判明した．
-（リポジトリ内の `churn_rate_pie.png` および `churn_by_contract.png` を参照）
+## 動作イメージ
 
-### 3.2 予測モデルの構築と評価
-ランダムフォレストを用いて解約予測モデルを構築した．
-モデルの精度（Accuracy）は約79%を達成し，解約リスクの判定に十分な有効性が確認された．
+```
+① 拡張アイコンをクリック
+② タブ一覧から解析したいタブを選ぶ
+③ そのタブ右下にAI小窓が出現
+④ 問題を自動検出 → 解答・解説を表示
+⑤ ページが変わると自動再解析
+```
 
-### 3.3 特徴量重要度の抽出
-モデルから特徴量重要度（Feature Importance）を抽出し，解約に寄与する主要な要因を特定した．
-上位の要因は以下の通りである．
-1. 総支払い額（TotalCharges）および月額料金（MonthlyCharges）
-2. 契約期間（tenure）
-3. 契約形態（Contract_One year, Two year）
-4. 光ファイバー回線の利用（InternetService_Fiber optic）
-（詳細は `feature_importance.png` を参照）
+---
 
-## 4. ビジネス考察と提案施策
-分析結果から，以下のビジネスインサイトと施策を提案する．
+## セットアップ（3ステップ）
 
-- **解約リスクの高い顧客層**: 短期契約者（特に月単位契約）であり，かつ光ファイバー回線を利用している層．
-- **提案施策1（契約移行の促進）**: 月単位契約の顧客に対し，1年・2年契約への移行キャンペーン（初月無料や月額割引など）をターゲット配信する．
-- **提案施策2（初期サポートの充実）**: 光ファイバー新規契約者に対し，初期の技術サポートを無料付帯させ，通信品質や設定に対する不満を取り除く．
+### 1. サーバーを起動する
 
-これにより，全顧客へ無差別にキャンペーンを打つ無駄なコストを削減し，データに基づいた効率的な顧客維持（LTVの向上）が可能となる．
+```bash
+cd webapp
+cp .env.example .env          # .env を作成
+# .env を開いて OPENAI_API_KEY=sk-xxx... を記入
+
+npm install                   # 依存パッケージ + アイコン自動生成
+npm start                     # サーバー起動 (http://localhost:3000)
+```
+
+> **OpenAI APIキー取得先**: https://platform.openai.com/api-keys
+> 費用を抑えたい場合は `.env` の `OPENAI_MODEL=gpt-4o-mini` のままで。
+
+### 2. Chrome拡張を読み込む
+
+1. Chrome で `chrome://extensions` を開く
+2. 右上の **「デベロッパーモード」をON**
+3. 「**パッケージ化されていない拡張機能を読み込む**」をクリック
+4. `extension/` フォルダを選択
+
+### 3. 使う
+
+1. 拡張アイコン（🤖）をクリック
+2. 解析したいタブをクリック → **「AI解析を開始しました ✓」**
+3. タブ内にAI小窓が表示され、問題が自動解析される
+
+---
+
+## 使い方
+
+| 操作 | 説明 |
+|------|------|
+| タブをクリック（ポップアップ） | オーバーレイON / OFF切替 |
+| 🔄 再解析ボタン | 強制的に現在のページを解析 |
+| ヘッダをドラッグ | 小窓を好きな位置に移動 |
+| − / + ボタン | 小窓を最小化 / 展開 |
+| 🌓 スライダー | 小窓の透明度を調整 |
+| × ボタン | オーバーレイを閉じる |
+
+---
+
+## ファイル構成
+
+```
+extension/          Chrome拡張
+  manifest.json     拡張の設定（Manifest V3）
+  background.js     サービスワーカー（タブ注入管理）
+  content.js        ページ内オーバーレイ本体
+  popup.html/js     拡張アイコンのポップアップ
+  styles.css        オーバーレイのスタイル
+  icons/            自動生成されるアイコン画像
+
+webapp/             Node.js APIサーバー
+  server.js         Express + OpenAI APIプロキシ
+  package.json      依存パッケージ定義
+  .env              APIキー設定（gitignore済み）
+
+generate-icons.js   PNG アイコン自動生成スクリプト
+```
+
+---
+
+## アーキテクチャ
+
+```
+[Chrome拡張]                    [Webサーバー]         [OpenAI]
+popup.js ──sendMessage──► background.js
+                                   │
+                          executeScript/insertCSS
+                                   │
+                                   ▼
+                             content.js           POST /solve
+                          (ページ内スクリプト) ──────────────► server.js ──► GPT
+                          MutationObserver                          │
+                          オーバーレイUI                    ◄────────┘
+```
+
+- **APIキーはサーバー側のみに存在**。拡張機能はlocalhostのプロキシ経由でのみOpenAIと通信します。
+- **MutationObserver** がDOMの変化（SPA遷移・問題切替）を検知して自動再解析します（1.5秒デバウンス）。
+- **問題検出** は `document.body.innerText` から「問」「solve」「calculate」等のキーワードを検索します。
+
+---
+
+## カスタマイズ
+
+| ファイル | 設定 | 説明 |
+|----------|------|------|
+| `webapp/.env` | `OPENAI_MODEL` | `gpt-4o`（高精度）や `gpt-4o-mini`（低コスト） |
+| `webapp/.env` | `PORT` | デフォルト `3000`（変更時は `content.js` の `API_URL` も変更） |
+| `extension/content.js` | `DEBOUNCE_MS` | DOM変化後の待機時間（デフォルト1500ms） |
+| `extension/content.js` | `KEYWORDS` | 問題検出キーワードの追加・変更 |
+| `extension/content.js` | `MAX_CHARS` | 送信する最大文字数（デフォルト8000字） |
+
+---
+
+## トラブルシューティング
+
+| 症状 | 原因 | 対処 |
+|------|------|------|
+| ポップアップが「未接続」表示 | サーバー未起動 | `cd webapp && npm start` |
+| 「注入できません」エラー | chrome:// などの内部ページ | 通常のWebページで試す |
+| 解析結果が出ない | APIキー未設定 | `.env` の `OPENAI_API_KEY` を確認 |
+| アイコンが表示されない | `npm install` 未実行 | `cd webapp && npm install` でアイコン自動生成 |
+| 解析が止まらない | ページ変化が激しい | `DEBOUNCE_MS` を増やす（例: 3000） |
+
+---
+
+## 動作環境
+
+- **Chrome** 103以上（Manifest V3 対応）
+- **Node.js** 18以上
+- **OpenAI API** アカウント

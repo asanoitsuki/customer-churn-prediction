@@ -1,0 +1,291 @@
+/* ============================================================
+   Tab Solver AI — オーバーレイスタイル
+   全プロパティに !important を付与してページの CSS 競合を防止
+   ============================================================ */
+
+/* ── ホスト要素（ポジション）──────────────────────────────── */
+#tab-solver-ai-overlay {
+  all: initial !important;
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  width: 360px !important;
+  max-height: 540px !important;
+  min-height: 52px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
+  border-radius: 14px !important;
+  box-shadow:
+    0 4px 6px rgba(0,0,0,.3),
+    0 20px 60px rgba(0,0,0,.55),
+    0 0 0 1px rgba(99,102,241,.25) !important;
+  z-index: 2147483647 !important;
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 13px !important;
+  color: #e2e8f0 !important;
+  line-height: 1.6 !important;
+  overflow: hidden !important;
+  opacity: .96 !important;
+  transition: opacity .2s ease, box-shadow .2s ease !important;
+  box-sizing: border-box !important;
+  user-select: none !important;
+}
+
+/* ── ヘッダ ──────────────────────────────────────────────── */
+#tsa-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 12px !important;
+  background: #1e293b !important;
+  border-bottom: 1px solid #334155 !important;
+  cursor: grab !important;
+  flex-shrink: 0 !important;
+  border-radius: 14px 14px 0 0 !important;
+}
+
+#tsa-header:active { cursor: grabbing !important; }
+
+#tsa-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  color: #a5b4fc !important;
+  letter-spacing: .3px !important;
+}
+
+#tsa-icon { font-size: 16px !important; }
+
+#tsa-controls {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* ── 透明度スライダー ─────────────────────────────────────── */
+#tsa-opacity-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 11px !important;
+  color: #64748b !important;
+}
+
+#tsa-opacity-slider {
+  all: initial !important;
+  width: 56px !important;
+  height: 3px !important;
+  appearance: auto !important;
+  -webkit-appearance: slider-horizontal !important;
+  cursor: pointer !important;
+  accent-color: #6366f1 !important;
+}
+
+/* ── コントロールボタン共通 ──────────────────────────────── */
+.tsa-btn {
+  all: initial !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  color: #94a3b8 !important;
+  transition: background .15s, color .15s !important;
+  box-sizing: border-box !important;
+}
+
+.tsa-btn:hover {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+#tsa-close-btn:hover {
+  background: #7f1d1d !important;
+  color: #fca5a5 !important;
+}
+
+/* ── ボディ ──────────────────────────────────────────────── */
+#tsa-body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  overflow: hidden !important;
+  min-height: 0 !important;
+}
+
+/* ── ステータスバー ──────────────────────────────────────── */
+#tsa-status-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  background: #0f172a !important;
+  border-bottom: 1px solid #1e293b !important;
+  font-size: 11px !important;
+  color: #64748b !important;
+  flex-shrink: 0 !important;
+}
+
+.tsa-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: #64748b !important;
+  flex-shrink: 0 !important;
+}
+
+.tsa-dot-active  { background: #6366f1 !important; animation: tsa-pulse 1.4s infinite !important; }
+.tsa-dot-success { background: #22c55e !important; }
+.tsa-dot-error   { background: #ef4444 !important; }
+.tsa-dot-idle    { background: #64748b !important; }
+
+@keyframes tsa-pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .4; }
+}
+
+/* ── コンテンツ領域 ──────────────────────────────────────── */
+#tsa-content {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #334155 transparent !important;
+}
+
+#tsa-content::-webkit-scrollbar { width: 4px !important; }
+#tsa-content::-webkit-scrollbar-track { background: transparent !important; }
+#tsa-content::-webkit-scrollbar-thumb { background: #334155 !important; border-radius: 2px !important; }
+
+/* ── セクションカード ────────────────────────────────────── */
+.tsa-card {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.tsa-card-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 6px 10px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .6px !important;
+  background: #0f172a !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+.tsa-card-body {
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+  color: #e2e8f0 !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  line-height: 1.65 !important;
+  max-height: 120px !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #334155 transparent !important;
+}
+
+#tsa-answer-card   { border-color: #3730a3 !important; }
+#tsa-answer-card .tsa-card-label   { color: #a5b4fc !important; }
+#tsa-answer-card .tsa-card-body    { color: #c7d2fe !important; }
+
+#tsa-explain-card  { border-color: #1d4038 !important; }
+#tsa-explain-card .tsa-card-label  { color: #6ee7b7 !important; }
+
+/* ── ローディング ────────────────────────────────────────── */
+#tsa-loading {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 16px 0 !important;
+  justify-content: center !important;
+  color: #6366f1 !important;
+  font-size: 13px !important;
+}
+
+.tsa-spinner {
+  width: 18px !important;
+  height: 18px !important;
+  border: 2px solid #334155 !important;
+  border-top-color: #6366f1 !important;
+  border-radius: 50% !important;
+  animation: tsa-spin .8s linear infinite !important;
+  flex-shrink: 0 !important;
+}
+
+@keyframes tsa-spin { to { transform: rotate(360deg); } }
+
+/* ── エラー ──────────────────────────────────────────────── */
+#tsa-error {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  padding: 10px !important;
+  background: rgba(127,29,29,.3) !important;
+  border: 1px solid #7f1d1d !important;
+  border-radius: 8px !important;
+  color: #fca5a5 !important;
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+}
+
+/* ── 問題なし ─────────────────────────────────────────────── */
+#tsa-no-problem {
+  text-align: center !important;
+  color: #64748b !important;
+  font-size: 12px !important;
+  padding: 14px 8px !important;
+  line-height: 1.7 !important;
+}
+
+/* ── フッタ ──────────────────────────────────────────────── */
+#tsa-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 7px 12px !important;
+  border-top: 1px solid #1e293b !important;
+  background: #0f172a !important;
+  flex-shrink: 0 !important;
+}
+
+#tsa-info-text {
+  font-size: 10px !important;
+  color: #475569 !important;
+}
+
+#tsa-refresh-footer-btn {
+  all: initial !important;
+  font-size: 11px !important;
+  color: #6366f1 !important;
+  cursor: pointer !important;
+  padding: 3px 8px !important;
+  border: 1px solid #3730a3 !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  transition: background .15s !important;
+  font-family: inherit !important;
+}
+
+#tsa-refresh-footer-btn:hover {
+  background: rgba(99,102,241,.15) !important;
+}
