@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Tab Solver AI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 380px;
+      min-height: 200px;
+      max-height: 560px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── ヘッダ ─────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #a5b4fc;
+      letter-spacing: .3px;
+    }
+
+    .logo-icon { font-size: 20px; }
+
+    /* サーバーステータスバッジ */
+    .server-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 20px;
+      border: 1px solid #334155;
+      color: #64748b;
+      background: #0f172a;
+      transition: all .2s;
+    }
+
+    .server-badge.connected {
+      border-color: #166534;
+      color: #86efac;
+      background: rgba(22,101,52,.2);
+    }
+
+    .server-badge.error {
+      border-color: #7f1d1d;
+      color: #fca5a5;
+      background: rgba(127,29,29,.2);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    .connected .badge-dot { animation: pulse 1.4s infinite; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── 案内文 ─────────────────────────── */
+    .guide {
+      padding: 10px 16px;
+      font-size: 12px;
+      color: #64748b;
+      border-bottom: 1px solid #1e293b;
+      flex-shrink: 0;
+    }
+
+    /* ── タブリスト ─────────────────────── */
+    .tabs-wrap {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #334155 transparent;
+    }
+
+    .tabs-wrap::-webkit-scrollbar { width: 4px; }
+    .tabs-wrap::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+    .tab-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #1e293b;
+      transition: background .15s;
+      position: relative;
+    }
+
+    .tab-item:hover { background: #1e293b; }
+
+    .tab-item.active {
+      background: rgba(99,102,241,.1);
+      border-left: 3px solid #6366f1;
+    }
+
+    .tab-favicon {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .favicon-fallback {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      background: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .tab-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tab-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: #e2e8f0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tab-url {
+      font-size: 10px;
+      color: #475569;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-top: 1px;
+    }
+
+    .tab-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+
+    .tab-badge.active-badge {
+      background: rgba(99,102,241,.2);
+      color: #a5b4fc;
+      border: 1px solid #4338ca;
+    }
+
+    .tab-badge.inject-badge {
+      background: transparent;
+      color: #475569;
+      border: 1px solid #334155;
+    }
+
+    /* ── 空状態 ─────────────────────────── */
+    .empty {
+      padding: 28px 16px;
+      text-align: center;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* ── フッタ ─────────────────────────── */
+    .footer {
+      padding: 8px 16px;
+      font-size: 10px;
+      color: #334155;
+      border-top: 1px solid #1e293b;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ── トースト ────────────────────────── */
+    #toast {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: #e2e8f0;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <span class="logo-icon">🤖</span>
+      Tab Solver AI
+    </div>
+    <div class="server-badge" id="server-badge">
+      <span class="badge-dot"></span>
+      <span id="server-status-text">確認中...</span>
+    </div>
+  </div>
+
+  <div class="guide" id="guide-text">
+    解析したいタブをクリックしてください
+  </div>
+
+  <div class="tabs-wrap" id="tabs-container">
+    <div class="empty">タブを読み込み中...</div>
+  </div>
+
+  <div class="footer">
+    <span id="tab-count">—</span>
+    <span>Tab Solver AI v1.0</span>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
